@@ -1,4 +1,28 @@
-.venv
+#.venv
 *.egg-info
 **/__pycache__/
-test-data/
+notebooks/
+misc/
+.DS_Store
+tests/
+
+# Virtual environments
+.venv/
+venv/
+.env
+# IDE
+.vscode/
+.idea/
+# Build artifacts
+dist/
+build/
+*.egg-info/
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+# Type checking
+.mypy_cache/
+# OS files
+.DS_Store
+Thumbs.db

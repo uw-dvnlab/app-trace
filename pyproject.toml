@@ -1,13 +1,14 @@
 [project]
 name = "tracetool"
-version = "1.0.0"
+version = "0.1.0"
 description = "Time-series Representation and Annotation for Computational Experiments"
 authors = [{name="Abdullah Zafar", email="abdullah.zafar@umontreal.ca"}]
-license = { text="MIT" }
-requires-python = ">=3.8"
+license = { text="BSD-3-Clause" }
+requires-python = ">=3.10"
 dependencies = [
+    "click>=8.0",
+    "pyyaml>=6.0",
 ]
-
 
 [project.scripts]
 trace = "tracetool.cli:main"

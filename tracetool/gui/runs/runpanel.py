@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import (
     QTableWidgetItem,
     QComboBox,
 )
+from PyQt6.QtCore import pyqtSignal
 
 
 class RunSelectorPanel(QWidget):
@@ -22,7 +23,7 @@ class RunSelectorPanel(QWidget):
         # ---- Run dropdown ----
         self.dropdown = QComboBox()
         for i, run in enumerate(runs):
-            self.dropdown.addItem(f"Run {i+1}")
+            self.dropdown.addItem(f"Run {i + 1}")
         self.dropdown.currentIndexChanged.connect(self.on_select)
 
         # ---- Prev/Next ----
