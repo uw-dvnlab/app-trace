@@ -1,5 +1,5 @@
 [project]
-name = "tracetool"
+name = "tracengine"
 version = "0.1.0"
 description = "Time-series Representation and Annotation for Computational Experiments"
 authors = [{name="Abdullah Zafar", email="abdullah.zafar@umontreal.ca"}]
@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.scripts]
-trace = "tracetool.cli:main"
+tracengine = "tracengine.cli:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]
