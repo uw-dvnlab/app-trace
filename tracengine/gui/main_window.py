@@ -519,6 +519,7 @@ class MainWindow(QMainWindow):
 
 def run_trace_tool(session_path: str | Path | None = None):
     app = QApplication(sys.argv)
+    app.setStyle("Fusion")
     app.setApplicationName("TRACE")
     app.setApplicationDisplayName("TRACE")
     win = MainWindow(initial_session_path=session_path)

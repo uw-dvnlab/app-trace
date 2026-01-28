@@ -43,7 +43,6 @@ class ChannelItem(QWidget):
 
         self.label = QLabel(display_text)
         self.label.setToolTip(tooltip)
-        self.label.setStyleSheet("color: #EEE; font-size: 11px;")
 
         layout.addWidget(self.checkbox)
         layout.addWidget(self.label)
@@ -71,7 +70,6 @@ class ChannelGroupWidget(QWidget):
 
         # Header
         header = QFrame()
-        header.setStyleSheet("background-color: #3a3a3a;")
         header_layout = QHBoxLayout(header)
         header_layout.setContentsMargins(4, 2, 4, 2)
 
@@ -80,7 +78,6 @@ class ChannelGroupWidget(QWidget):
         self.btn_collapse.clicked.connect(self._toggle_collapse)
 
         self.lbl_name = QLabel(group_name)
-        self.lbl_name.setStyleSheet("font-weight: bold; color: #EEE;")
 
         header_layout.addWidget(self.btn_collapse)
         header_layout.addWidget(self.lbl_name)
@@ -144,12 +141,10 @@ class ChannelBrowser(QWidget):
 
         # Header
         header = QFrame()
-        header.setStyleSheet("background-color: #2a2a2a;")
         header_layout = QHBoxLayout(header)
         header_layout.setContentsMargins(8, 4, 8, 4)
 
         lbl_title = QLabel("Channels")
-        lbl_title.setStyleSheet("font-weight: bold; color: #EEE; font-size: 12px;")
 
         self.btn_collapse = QPushButton("◀")
         self.btn_collapse.setFixedSize(20, 20)
@@ -165,7 +160,6 @@ class ChannelBrowser(QWidget):
         # Scroll area for channel groups
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        scroll.setStyleSheet("QScrollArea { border: none; background-color: #2a2a2a; }")
 
         self.scroll_content = QWidget()
         self.scroll_layout = QVBoxLayout(self.scroll_content)
@@ -178,7 +172,6 @@ class ChannelBrowser(QWidget):
 
         # Action bar
         action_bar = QFrame()
-        action_bar.setStyleSheet("background-color: #333;")
         action_layout = QVBoxLayout(action_bar)
         action_layout.setContentsMargins(4, 4, 4, 4)
         action_layout.setSpacing(4)

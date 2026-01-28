@@ -26,9 +26,7 @@ class IntervalAnnotator(AnnotatorBase):
     version = "1.0.0"
     produces = "interval"
 
-    required_channels = {
-        "signal": ChannelSpec(semantic_role="signal")  # Must be bound at runtime
-    }
+    required_channels = {"signal": ChannelSpec(semantic_role="signal")}
 
     @classmethod
     def get_parameters(cls) -> List[Dict[str, Any]]:

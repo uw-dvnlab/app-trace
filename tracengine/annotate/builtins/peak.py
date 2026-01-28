@@ -20,9 +20,7 @@ class PeakAnnotator(AnnotatorBase):
     version = "1.0.0"
     produces = "timepoint"
 
-    required_channels = {
-        "signal": ChannelSpec(semantic_role="signal")  # Must be bound at runtime
-    }
+    required_channels = {"signal": ChannelSpec(semantic_role="signal")}
 
     @classmethod
     def get_parameters(cls) -> List[Dict[str, Any]]:

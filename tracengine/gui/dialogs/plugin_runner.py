@@ -112,6 +112,7 @@ class PluginRunnerDialog(QDialog):
         self.txt_instance_name.setPlaceholderText(
             "Instance Name (default: Plugin Name)"
         )
+        self.txt_instance_name.textChanged.connect(self._on_instance_name_changed)
         select_layout.addRow("Instance Name:", self.txt_instance_name)
 
         # Plugin info
@@ -210,6 +211,21 @@ class PluginRunnerDialog(QDialog):
             display_name = getattr(cls, "name", name)
             self.combo_plugin.addItem(f"{display_name} ({name})", cls)
 
+    def _on_instance_name_changed(self, text):
+        """Re-validate when instance name changes."""
+        required_channels = getattr(self.selected_plugin_cls, "required_channels", {})
+        required_events = getattr(self.selected_plugin_cls, "required_events", {})
+        has_requirements = bool(required_channels or required_events)
+
+        if self._check_configured():
+            self.lbl_status.setText("✓ Configured")
+            self.btn_run.setEnabled(True)
+        else:
+            self.lbl_status.setText(
+                "⚠ Configure bindings first" if has_requirements else ""
+            )
+            self.btn_run.setEnabled(not has_requirements)
+
     def _on_plugin_selected(self, index):
         """Handle plugin selection."""
         cls = self.combo_plugin.currentData()
@@ -222,6 +238,32 @@ class PluginRunnerDialog(QDialog):
             self.btn_run.setEnabled(False)
             self.lbl_status.setText("")
             return
+
+        # Update default instance name
+        if cls:
+            current_name = self.txt_instance_name.text()
+
+            # Check for existing config for this plugin
+            existing_name = None
+            if self.run.run_config:
+                # Check channel bindings
+                full_bindings = self.run.run_config.channel_bindings
+                for name in full_bindings:
+                    if name == cls.name or name.startswith(f"{cls.name}_"):
+                        existing_name = name
+                        break
+
+                # Check event bindings if not found
+                if not existing_name and self.run.run_config.event_bindings:
+                    for name in self.run.run_config.event_bindings:
+                        if name == cls.name or name.startswith(f"{cls.name}_"):
+                            existing_name = name
+                            break
+
+            if existing_name:
+                self.txt_instance_name.setText(existing_name)
+            elif not current_name or current_name == cls.name:
+                self.txt_instance_name.setText(cls.name)
 
         # Show plugin info
         version = getattr(cls, "version", "unknown")
@@ -244,21 +286,7 @@ class PluginRunnerDialog(QDialog):
         self.btn_configure.setEnabled(has_requirements)
 
         # Check if already configured
-        if self._check_configured():
-            self.lbl_status.setText("✓ Configured")
-            self.btn_run.setEnabled(True)
-        else:
-            self.lbl_status.setText(
-                "⚠ Configure bindings first" if has_requirements else ""
-            )
-            self.btn_run.setEnabled(not has_requirements)
-
-        # Update default instance name
-        if cls:
-            current_name = self.txt_instance_name.text()
-            # Only update if empty or matches generic plugin pattern
-            if not current_name or current_name == cls.name:
-                self.txt_instance_name.setText(cls.name)
+        self._on_instance_name_changed(self.txt_instance_name.text())
 
         # Build parameter form
         self._build_parameter_form(cls)
@@ -426,23 +454,26 @@ class PluginRunnerDialog(QDialog):
                 instance_name = f"{base_name}_{safe_suffix}"
                 self.txt_instance_name.setText(instance_name)
 
-            # Apply to ALL runs in session with nested structure
+            # Apply to current run only
             if channel_bindings or bindings.get("events"):
                 from tracengine.data.descriptors import RunConfig
 
-                for r in self.all_runs:
-                    if r.run_config is None:
-                        r.run_config = RunConfig()
+                if self.run.run_config is None:
+                    self.run.run_config = RunConfig()
 
-                    # Store channel bindings
-                    if channel_bindings:
-                        r.run_config.channel_bindings[instance_name] = channel_bindings
+                # Store channel bindings
+                if channel_bindings:
+                    self.run.run_config.channel_bindings[instance_name] = (
+                        channel_bindings
+                    )
 
-                    # Store event bindings
-                    if bindings.get("events"):
-                        r.run_config.event_bindings[instance_name] = bindings["events"]
+                # Store event bindings
+                if bindings.get("events"):
+                    self.run.run_config.event_bindings[instance_name] = bindings[
+                        "events"
+                    ]
 
-            self.lbl_status.setText(f"✓ Configured ({len(self.all_runs)} runs)")
+            self.lbl_status.setText("✓ Configured")
             self.btn_run.setEnabled(True)
             self.bindings_changed.emit()
 
@@ -506,10 +537,9 @@ class PluginRunnerDialog(QDialog):
         if params:
             from tracengine.data.descriptors import RunConfig
 
-            for r in self.all_runs:
-                if r.run_config is None:
-                    r.run_config = RunConfig()
-                r.run_config.parameters[instance_name] = params
+            if self.run.run_config is None:
+                self.run.run_config = RunConfig()
+            self.run.run_config.parameters[instance_name] = params
 
             self.bindings_changed.emit()  # Trigger config save
 
